@@ -157,7 +157,7 @@ jobs:
 
     - name: Write cosign public key to disk
       run: 'echo "$KEY" > cosign.pub'
-        shell: bash
+      shell: bash
       env:
           KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
 
@@ -252,7 +252,7 @@ jobs:
           })
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/$master' && github.event_name == 'push'
       run: terraform apply -auto-approve
       working-directory: ${{ env.TF_CONFIG_DIRECTORY }}
       
