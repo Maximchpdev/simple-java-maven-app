@@ -11,7 +11,7 @@ env:
   IMAGE: maximchp/weatherapp
   TF_LOG: INFO
   TF_INPUT: false
-  TF_CONFIG_DIRECTORY: "./terraform"
+  TF_CONFIG_DIRECTORY: "./terraform/eks"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -154,12 +154,16 @@ jobs:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.
         COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}   
-        
-    - name: Check images
+
+    - name: Write cosign public key to disk
+      run: 'echo "$KEY" > cosign.pub'
+        shell: bash
+      env:
+          KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+
+    - name: Verify images
       run: |
-        docker buildx imagetools inspect docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
-        docker pull docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
-        cosign verify --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        cosign verify --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
       env:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.  
         
@@ -248,7 +252,7 @@ jobs:
           })
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/CHANGE_THIS_TO_BRANCH_MASTER' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve
       working-directory: ${{ env.TF_CONFIG_DIRECTORY }}
       
@@ -301,6 +305,13 @@ jobs:
           namespace: kube-system
           manifests: |
             kubernetes/metrics-server.yaml
+            
+      - name: Deploy cluster policy manifest to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          manifests: |
+            kubernetes/kyverno-cluster-policy.yaml      
 
       - name: Deploy app to the Kubernetes cluster
         uses: azure/k8s-deploy@v1

@@ -1,0 +1,23 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: check-signed-images
+spec:
+  validationFailureAction: Enforce
+  background: false
+  webhookTimeoutSeconds: 30
+  failurePolicy: Fail
+  rules:
+    - name: check-image-signature
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      verifyImages:
+      - image: "maximchp/weatherapp:*"
+        key: |-
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEx5afAnIsAhrAQ4WqPqiqx+CI3x1U
+          6FrFPAUPleVYf4uWqOj2m5nXI1TwoBGUlBy+uokIVVNp4xc50cy4TS5cfQ==
+          -----END PUBLIC KEY-----
