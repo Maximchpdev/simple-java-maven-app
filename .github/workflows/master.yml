@@ -126,14 +126,16 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v5
+
+    - id: docker_meta
+      uses: docker/metadata-action@v4.4.0
       with:
         images: ${{ env.IMAGE }}
+        tags: type=sha,format=long
 
-    - name: Build and push
-      uses: docker/build-push-action@v3
+    - name: Build and Push container image
+      uses: docker/build-push-action@v4.0.0
+      id: build-and-push
       env:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.
       with:
@@ -145,21 +147,25 @@ jobs:
         #cache-from: type=gha
         #cache-to: type=gha,mode=max
         #add ARG VERSION to Dockerfile
-           
+
     - name: Sign image with a key
       run: |
+        images=""
+        for tag in ${TAGS}; do
+          images+="${tag}@${DIGEST} "
+        done
         cosign sign --key env://COSIGN_PRIVATE_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
-      shell: bash
       env:
-        VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.
+        TAGS: ${{ steps.build-and-push.outputs.tags }}
         COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}   
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
     - name: Check images
       run: |
         docker buildx imagetools inspect docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
         docker pull docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
-        cosign verify --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        cosign verify --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
       env:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.  
         
