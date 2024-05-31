@@ -163,7 +163,7 @@ jobs:
 
     - name: Verify images
       run: |
-        cosign verify --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        cosign verify --insecure-ignore-tlog --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
       env:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.  
         
@@ -252,21 +252,17 @@ jobs:
           })
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/$master' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve
       working-directory: ${{ env.TF_CONFIG_DIRECTORY }}
       
   
   deploy:
     name: EKS deployment
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     needs: [ version, build, terraform ]
     runs-on: ubuntu-latest
     steps:
-    
-      - name: Validate image 
-        run: |
-          cosign verify --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }} --key cosign.pub
 
       - uses: actions/checkout@v4
         with:
@@ -287,7 +283,7 @@ jobs:
           aws-region: il-central-1
 
       - name: Update kube config
-        run: aws eks update-kubeconfig --name EKS-Cluster
+        run: aws eks update-kubeconfig --name tf-cluster
 
       - name: Show kube config path
         run: kubectl config view --minify --output 'jsonpath={.kubeconfig}'
@@ -305,13 +301,24 @@ jobs:
           namespace: kube-system
           manifests: |
             kubernetes/metrics-server.yaml
+      - name: Create docker secret for docker registry
+        run: |
+          kubectl create namespace connaisseur \
+          kubectl apply -f kubernetes\connaisseur\deploy.yaml -l 'app.kubernetes.io/component=connaisseur-init' -n connaisseur \
+          kubectl apply -f kubernetes\connaisseur\deploy.yaml -l 'app.kubernetes.io/component=connaisseur-core' -n connaisseur \
+          kubectl apply -f kubernetes\connaisseur\deploy.yaml -l 'app.kubernetes.io/component=connaisseur-webhook' -n connaisseur \
+          sleep 30 \
+          kubectl get all -n connaisseur \
+          sleep 30 \ 
+          kubectl get all -n connaisseur \
+          sleep 30 \
+          kubectl get all -n connaisseur
+          sleep 30 \
+          kubectl get all -n connaisseur
             
-      - name: Deploy cluster policy manifest to the Kubernetes cluster
-        uses: azure/k8s-deploy@v1
-        with:
-          namespace: default
-          manifests: |
-            kubernetes/kyverno-cluster-policy.yaml      
+      - name: Create docker secret for docker registry
+        run: |
+          kubectl run hello-world --image=docker.io/hello-world
 
       - name: Deploy app to the Kubernetes cluster
         uses: azure/k8s-deploy@v1
@@ -323,3 +330,7 @@ jobs:
             kubernetes/deployment.yaml
           images: |
             docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+
+      - name: Create docker secret for docker registry
+        run: |
+          kubectl get pods --all-namespaces

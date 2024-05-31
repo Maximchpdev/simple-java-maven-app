@@ -1,0 +1,563 @@
+---
+# Source: connaisseur/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: connaisseur-serviceaccount
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: connaisseur/templates/redis.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: connaisseur-redis-secret
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+    REDIS_PASSWORD: N2VlZmNjODYtNzdmMS00ZjIzLWE0MDgtNDllNDliYmNjMWE1    # pragma: allowlist secret
+---
+# Source: connaisseur/templates/redis.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: connaisseur-redis-tls
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2VENDQXRHZ0F3SUJBZ0lRYUV3cnA0ZkxjU2VCMkFuWC94aWJ0ekFOQmdrcWhraUc5dzBCQVFzRkFEQTAKTVRJd01BWURWUVFERXlsamIyNXVZV2x6YzJWMWNpMXlaV1JwY3kxelpYSjJhV05sTG1OdmJtNWhhWE56WlhWeQpMbk4yWXpBZ0Z3MHlOREExTXpFeE1qVTBNVGxhR0E4eU1USTBNRFV3TnpFeU5UUXhPVm93TkRFeU1EQUdBMVVFCkF4TXBZMjl1Ym1GcGMzTmxkWEl0Y21Wa2FYTXRjMlZ5ZG1salpTNWpiMjV1WVdsemMyVjFjaTV6ZG1Nd2dnRWkKTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEa0dyL2VhTnB0SXdJVXBtaHlUcUkzSDhQagpWTzNPSlMxRjhnOUttZ0lDR0hzWnhUUzNHcS91Ykt5Q3pTSFcvOHZnWWRtbWMxSzk2R0YvM25iajZ6UVNaekhOCmZTRjUyTDRHSWhkRVppTlB4bXJ0WklnckdlckQ1WVBhUmoxTHBYNWxFZTB5cXpPK3VaM1FCR05odjMrODV0OXUKczhXbzBaOFU0UVN5elNMQjYzYmtmQWNJTUpld05sTCtHc3ZJOUd5aFE3cHlMQXd2N2RYZ24vWVNTQWZZZ0g2NwowaFUyTHZpZ3FSS1VBdUVuWGVwMmZlbC9icnNSY0w5ZC9JcG9CWisyd1dGOElhZ2JTRG1pcDBib1hKSWk0aWU3ClBjVDQwMVRyQWU2TWFZeVZlblZyVCtXczd1REdvUjMyUk1zV2RuOW0wdFdxRGxKNUhycENWUXhUdnJ3SEFnTUIKQUFHamdmUXdnZkV3RGdZRFZSMFBBUUgvQkFRREFnV2dNQjBHQTFVZEpRUVdNQlFHQ0NzR0FRVUZCd01CQmdncgpCZ0VGQlFjREFqQU1CZ05WSFJNQkFmOEVBakFBTUlHeEJnTlZIUkVFZ2Frd2dhYUNHV052Ym01aGFYTnpaWFZ5CkxYSmxaR2x6TFhObGNuWnBZMldDSldOdmJtNWhhWE56WlhWeUxYSmxaR2x6TFhObGNuWnBZMlV1WTI5dWJtRnAKYzNObGRYS0NLV052Ym01aGFYTnpaWFZ5TFhKbFpHbHpMWE5sY25acFkyVXVZMjl1Ym1GcGMzTmxkWEl1YzNaagpnamRqYjI1dVlXbHpjMlYxY2kxeVpXUnBjeTF6WlhKMmFXTmxMbU52Ym01aGFYTnpaWFZ5TG5OMll5NWpiSFZ6CmRHVnlMbXh2WTJGc01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRREhRbjcwc3dFOW03azEzeGEvcS94S0t1dkMKbmZaaW82MWRGdk1jSGM1Y1BBc2tXR3paaEFESVdYRU15ck5XNTN1SVNWeURkTWk0SHNEZm9wR1g0NlB1Y0c0RgpuK2haakxjNjZ2TFhObVplS2VEaFhnU1hLd2U1OUNPNlZmUWRGZHlWZDJSSVRhSTZNVjRpeGtGVzUwVTkwVDRUClN3YktHakpOUmhyOGxnUnZ2Y3o5R085MnVmc0xEVjhKV05RNXNpOWdBOGZVOW1hN3BRZEtNVzVVOVUzMi9yRGEKbSttNXZyZzk3WVpvNWdNeGVOREluODVhRjN3VWIrMnptZEM4SE1VS2tlM3FIQUFHOXB1Y1gxWlE3UzNtNXRlVQpsajB4eUdMMEtmM0phM1ppYXdURWFDaU9qdzJOZ2ZFeVlCekJCME9BVytaWjFrbDc0QzNjdWRjWXFrZXYKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBNUJxLzNtamFiU01DRktab2NrNmlOeC9ENDFUdHppVXRSZklQU3BvQ0FoaDdHY1UwCnR4cXY3bXlzZ3MwaDF2L0w0R0hacG5OU3ZlaGhmOTUyNCtzMEVtY3h6WDBoZWRpK0JpSVhSR1lqVDhacTdXU0kKS3hucXcrV0Qya1k5UzZWK1pSSHRNcXN6dnJtZDBBUmpZYjkvdk9iZmJyUEZxTkdmRk9FRXNzMGl3ZXQyNUh3SApDRENYc0RaUy9ockx5UFJzb1VPNmNpd01MKzNWNEovMkVrZ0gySUIrdTlJVk5pNzRvS2tTbEFMaEoxM3FkbjNwCmYyNjdFWEMvWGZ5S2FBV2Z0c0ZoZkNHb0cwZzVvcWRHNkZ5U0l1SW51ejNFK05OVTZ3SHVqR21NbFhwMWEwL2wKck83Z3hxRWQ5a1RMRm5aL1p0TFZxZzVTZVI2NlFsVU1VNzY4QndJREFRQUJBb0lCQVFDNGVkRzJnOEl6QlY4SAphRldNTElBUWFNWTVzbFBvcGpScEh3eXkzcjdGQnh0M2lmL0tIZkV1dUFFRWYvWGdOVnVqQ2ovRjEvcVF6OEVhCmNzWmdLYlloTkFnWkVodml1U0ZsUUdqa3psMjhoTkd4VDk2NFRPdUtwckh0ODJSYksycC9QdkpBU2lrOUZFekgKRU9WM0JqSytpVkVsN0luc3NDc2g3YUdwSVRIODlYUnhxV3k5bEtRVU5PMk5hY0hUcW5iblU3K0VhVkVWZEtkVApMSnRVOVlVY3M5QXFDbTBJU005NEtPbTNmaWFsS1haNGQ5elExVU9OWGI4QTBZcGRXS3RNZmxVT3U5ZnRTM2taCm1kenhjMnRyb1BYeXgraFZrNDlFZkx5RFEreSsvcUFUUmgxY0s0RmFhWk9NK3R2enQza3BTYzc3WEJQQkF0a3kKSnNlWERSakJBb0dCQU8xVW4yZFVGUEovZ0ZtWDdDaEhQU3F2NEJ3V05MM24xNEJYcXRrNDVWMUtvQWllYjg0UQpvQjJoRjJ1WTgvTW5GTEl3M2Y4bzhKNFdIMnd6WmREdEJOVWttNFZkY0dQMHdCY0ZCZjBJUkVBT0l2S0VobDJTCnBYTHNPaE9waWNIaS90blpPS21QeXNGbDNYVWRjVjJlRkM0SnBxeE9rOWE4TjU5a1FCMDFwVWxSQW9HQkFQWU0KVk9zRWp6K1FGc1RLQUo4LzJqdld1K2d6R2FQUk9OaDN0dlV0ZGtrTis4R2pNUWtnUVdTY05FZDRYbDk3Q1FmaQpvd3gybko0ZmxiSlgvM1BpcmRQMjUxSzE4YytzbXlKeVF2Y3dZS3QvcS9lWUFNdVlaSG9qNVBtaVVHL29iK0tMCkU2RHFLVG14TjlKR3JYV1NmUG1vTW5mZVI1SFlLNGtWVzBLY0lWblhBb0dBU3VESkRpdThGQ3BnRDJSY1VQVHcKK25mVTZHZWxLa2xzZDRTeFZhbWF6QTFRWW9mQ1ZLeHdLQWo4UDZsWlJsME5MWTgzYTFxNlY5WTVBY1ZSbVZJKwpsUlRnc0hvampKWGF5U2gvbEM2NGdkRXorM29PZnBWVzkrUktDb3dSOTRjcnl3VzYxOXlUSnVPQnRJS2VrdC9lCkZBeGRkcjJ2N1M4akNYbnl0SVNKYXBFQ2dZQVBWRGRhS1ArUHN6ZG43VG5hc2d5em02NDdTaXUzeEFvcG1sUEEKdEtOZzY4a2FpRU0rMFU2aHFRV3N5amYrOU5oY01HZCtHRW1ycEVZY1JWVTU4QTVxWFVDT0s1MjBGWW5Zdkl1bApnTk1VL0RCSGphWEhDV2lCSDRsZGNCcFl6bjloK3M0dlFVZHVPN2RCbDN1cERvWlF1NFRoYU96R2psUXdCeStYClY4alFJd0tCZ0VrT0xidjFhRmtQUkJJbHBabG1kb1g3K1B5RHlRTUxJejU1ZGtpa3MvZzN0cFJJZ1Y4MDB2b0cKRGhiMFN5eUI5ajQxOTY5K25iMkVMeTZHeCtpUWR2NHB5a3NnZEppSnUwU3dYaGtvdmQxTzVqK1FlUzB6V1JLcAprQ3N5bDhSU2hiV1ZYV3FVeDVuU2hoSUIzbG1zZS9aaEwwZmFEdnhrc2w0clpFVHVXUHg4Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+---
+# Source: connaisseur/templates/webhook+certificate.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: connaisseur-tls
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURyVENDQXBXZ0F3SUJBZ0lSQU95b05TNU5VcXVCbXNpdWtGZUozSkV3RFFZSktvWklodmNOQVFFTEJRQXcKS2pFb01DWUdBMVVFQXhNZlkyOXVibUZwYzNObGRYSXRjM1pqTG1OdmJtNWhhWE56WlhWeUxuTjJZekFnRncweQpOREExTXpFeE1qVTBNVGxhR0E4eU1USTBNRFV3TnpFeU5UUXhPVm93S2pFb01DWUdBMVVFQXhNZlkyOXVibUZwCmMzTmxkWEl0YzNaakxtTnZibTVoYVhOelpYVnlMbk4yWXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQUo0TkFhSEhTM3JYdlgvL3ZDWkRCRTdIZDFtN0RWUWd3V0dqZ2phcElpWlVzRnFQcllqTApWdVpIUDB6THBlcXpSMTFaenhPczNEc1ZEQlRXcVc3Rmdiak5yK3RKY0hneXR5NmJVZ2ozcFZ0QWY0bjd0endvCjljNXVOOHBMTTFoQ3d6Q0ZCQXhub2hxdWhXSmlPNGVGRFdISTFKdGZ6eDFlVzBYdWhNYUpsRERwV3kxbFBra1UKb1R4UlEyRHRDdktQTWF0cHVmNFFBSHNJUHRvVWtmYmYxVXRCb2RxVlVqZ25FcC9Pd2xWYmtkVnVwdzFRQ2RidwpjdWM2b1ZoelFRNXk1MG1xM0hCMzMrZ1d6YlF0Q2o5RFhRbi9ReUpKRVpWKzhYVnZrNW1sQTNLY25DSVpzekpSCkQ4UmM4dENMclhPOC9sS2lGTURpWTU3eHpqYU80dXNpNXQwQ0F3RUFBYU9CeXpDQnlEQU9CZ05WSFE4QkFmOEUKQkFNQ0JhQXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUZCd01DTUF3R0ExVWRFd0VCL3dRQwpNQUF3Z1lnR0ExVWRFUVNCZ0RCK2dnOWpiMjV1WVdsemMyVjFjaTF6ZG1PQ0cyTnZibTVoYVhOelpYVnlMWE4yCll5NWpiMjV1WVdsemMyVjFjb0lmWTI5dWJtRnBjM05sZFhJdGMzWmpMbU52Ym01aGFYTnpaWFZ5TG5OMlk0SXQKWTI5dWJtRnBjM05sZFhJdGMzWmpMbU52Ym01aGFYTnpaWFZ5TG5OMll5NWpiSFZ6ZEdWeUxteHZZMkZzTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTBiQTZieVhVVTUvSUgrSG03b1kzenQ1djg3V052M2NQd3QwVUZBR1ZkCi81Y2NFcWpRYVJFR0JNTXlrZGM1TTFvSzBUL2NkcEd3NFhnMjVXKzZVOXcwRWlGSGdlV0VJNnh5UDhPTXdKU2gKdE1jVFc5aVF1S2NzQlJiMTFZWHA2NjNXSE5QZWxoeXZzTnJWNEdhRUtGSkg3bXFnazJTUlV6YWlTcFc5bEt5NApzNnJDMkxUa2RpYThsM1Q1SG9zM1hwMTNjL243b2xaYS9lejFKVUFUdXZPNlN0cUlKajY4QWYxa3ozN0c1VENPCmEzWWpPVHZJOWkvcXdVcGJINGZvNkVNVjNmOXZQZ0RIeDJraERZeHBCY0lXQ3ROeE9KZlZoSDlIOC9RNVNQMncKbmRoaDkrbTRRNm1YbU80Qno5czhNZ2F3NFFpRU9Rc1NUbUgva3orZ3hvbjYKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBbmcwQm9jZExldGU5Zi8rOEprTUVUc2QzV2JzTlZDREJZYU9DTnFraUpsU3dXbyt0CmlNdFc1a2MvVE11bDZyTkhYVm5QRTZ6Y094VU1GTmFwYnNXQnVNMnY2MGx3ZURLM0xwdFNDUGVsVzBCL2lmdTMKUENqMXptNDN5a3N6V0VMRE1JVUVER2VpR3E2RlltSTdoNFVOWWNqVW0xL1BIVjViUmU2RXhvbVVNT2xiTFdVKwpTUlNoUEZGRFlPMEs4bzh4cTJtNS9oQUFld2crMmhTUjl0L1ZTMEdoMnBWU09DY1NuODdDVlZ1UjFXNm5EVkFKCjF2Qnk1enFoV0hOQkRuTG5TYXJjY0hmZjZCYk50QzBLUDBOZENmOURJa2tSbFg3eGRXK1RtYVVEY3B5Y0lobXoKTWxFUHhGenkwSXV0Yzd6K1VxSVV3T0pqbnZIT05vN2k2eUxtM1FJREFRQUJBb0lCQUZTZFJmaGtoK1pXUmQrVwovQlhIM3pDRjNVR3V3SzMvYzBoZ2p6L1FRTFlndE9GbTlsSzcrZVFDMU1LNmJETkFrNzVJYkhKdUl1R0duUmN5CjdUYWVpcHB6ay9EMU9qOC9kNDUrSE9jc0hkekNwUVVzTzZiN2pzMWJlSWJXeDhCQ3pkalYvWnJlaUl5Y1RsQ2oKb3BjbEJrc0poN2svQzlUL1JRSWxkZlFNaDhlKzcwbk82bDRsQ1AvN3JzOElYK01YeDhCVjVPcEtYS2RSd2k1MwpmUDRxQkVSRVZRenRBYnNqWkozcFlMdFhvUXMxdEtFZ3h2R29GVEY2Z3NVWWtYWDBxMFczclZEKzE0TFFGRy96CmN4RHlkWHFKWC84VS9ObHYyRGdSQVRBMWlJSVY2M2R3eHNaVTl5aGFxclRWbGcrakxBbTVFUjhRM3NkYlh4OEIKVitaQXFJRUNnWUVBMEo1U0t1b0NYbFBhWWFXWmRWS3YyeEtsdzRkNXhCRUJGWkdFYy8xNWpjVzR0UlgvSTVzZwoyRmVKY2JPclJoTWpWRWZJWTZwdGZPWTlBMWpMVVRGWGVrdEpSbVJUYWNCZE5hQmw0aUdzWVF3NHdPVVlsNG13Ck14MnlqMFJMRHZ4dGlxcDN4Qm1KTmxoelNuem1kbHRZMFpCZzI5NVpueTgyYTdWdXNNQ2JxZEVDZ1lFQXdmS0oKZHcraUNQZXh0cnlEdEZ4VFBmYWczMnVFS2MrUG9zOVgrNXhramVaMGp2VHVrTHZXQUNLcVZleHFVakF2dm9oZwpTc01PbnlMNnNtTTJXNWtQYzJXbG5Cenp1NWIvVm81RklORDdReXJVM1RUb2VnN0FFTllEeUU0QmlFMmdxVVB4CmdhaHU2UkhrUEdOWVVkVzFURkQ2WWd6TGVNV0ZmWXE5TFlPVlkwMENnWUJXNGZqYWdvYmwvZ292TEthU3BCTTEKSzdqNWk4eDhpWkJvQ1NpZW5ld256VGExeENsMERNRkxHSG5YYnJwZi9zeHg1MHRmcHJUZWxZekhmZzEvRFF1ZgpsUWM1VjhNZGdjM1A3Yk5BMEVGWVVaeTVTVEJLdkQ4enFxU1k0aHBZYld5NW1YRXpyR2JteVVPS3ZDWEhHUmdPCmZ4QzN3UXlXTFRWKytoclZaZ0h1WVFLQmdBTCtyOGk2NFJHcVlZQWs0UlBENlRVbnZjdzFhTkVNZDNkWUpFK3EKVnBNcVg5cGxSZG5PVEx1cnpWMk9UUVgvNEh6Y3RqL3hTeVNCOGNVWGF4dDIvWm9Xazd3Wlpsb2JOczRyWEQzcApmRGZKVFlnczdQb1ZpRG02VkV5Zmg3NkhGRmdJeUkzci8rcHhjRWpPYitxemxoMGJrd0k0bUZ2QkVSS2pOZENpCkc0aHhBb0dBZFBWRDV3cG1EaHNKK2lDZFpaQ0FWMXZ4SVRzQ2ZNSFo0U2V6eTFYNVRGNW1EUTVXeGJ0cVF3cngKbjZQQUJWQ3JSc1dYajF4YjQvK3MzWkh0M0xEejh0c3B1Uzl2cllDNTFEeGdjVWk2UUcwcjJudGtFcUdRY2I4aQo3c3RjTEE3SFR1VmdMc1RmVkgwRUlQbmFuWndwb1pkRm9OYUNSbS9ZM3hodHZubE9mTTQ9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+---
+# Source: connaisseur/templates/configmaps.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connaisseur-app-config
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  config.yaml: |
+  
+validators:
+- name: myvalidator
+  type: cosign
+  trust_roots:
+  - name: mykey
+    key: |
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEx5afAnIsAhrAQ4WqPqiqx+CI3x1U
+6FrFPAUPleVYf4uWqOj2m5nXI1TwoBGUlBy+uokIVVNp4xc50cy4TS5cfQ==
+-----END PUBLIC KEY-----
+
+policy:
+- pattern: "docker.io/maximchp/weatherapp:*"
+  validator: myvalidator
+  with:
+    key: mykey
+---
+# Source: connaisseur/templates/configmaps.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connaisseur-alert-config
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  config.yaml: |
+      {}
+---
+# Source: connaisseur/templates/env.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connaisseur-env
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  AUTOMATIC_CHILD_APPROVAL: "true"
+  AUTOMATIC_UNCHANGED_APPROVAL: "false"
+  DETECTION_MODE: "false"
+  RESOURCE_VALIDATION_MODE: "all"
+  CACHE_EXPIRY_SECONDS: "30"
+  CACHE_ERRORS: "true"
+  LOG_LEVEL: "info"
+---
+# Source: connaisseur/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: connaisseur-cluster-role
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["pods", "replicationcontrollers"]
+  verbs: ["get"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get"]
+---
+# Source: connaisseur/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: connaisseur-cluster-role-binding
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+- kind: ServiceAccount
+  name: connaisseur-serviceaccount
+  namespace: connaisseur
+roleRef:
+  kind: ClusterRole
+  name: connaisseur-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: connaisseur/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: connaisseur-role
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+---
+# Source: connaisseur/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: connaisseur-role-binding
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+- kind: ServiceAccount
+  name: connaisseur-serviceaccount
+  namespace: connaisseur
+roleRef:
+  kind: Role
+  name: connaisseur-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: connaisseur/templates/redis.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: connaisseur-redis-service
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: redis
+---
+# Source: connaisseur/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: connaisseur-svc
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 443
+      targetPort: 5000
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+---
+# Source: connaisseur/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connaisseur
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/config: 99a80d9899d991871b8b733fdec49a8fafcbcc4be6bd3781402b1b4017eff282
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: connaisseur
+      app.kubernetes.io/instance: connaisseur
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: connaisseur
+        app.kubernetes.io/instance: connaisseur
+      annotations:
+        checksum/config: 99a80d9899d991871b8b733fdec49a8fafcbcc4be6bd3781402b1b4017eff282
+    spec:
+      serviceAccountName: connaisseur-serviceaccount
+      containers:
+        - name: connaisseur
+          image: docker.io/securesystemsengineering/connaisseur:v3.5.0
+          imagePullPolicy: Always
+          ports:
+            - name: https
+              containerPort: 5000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: https
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: https
+              scheme: HTTPS
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 20001
+            runAsNonRoot: true
+            runAsUser: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: certs
+              mountPath: /app/certs
+              readOnly: true
+            - name: app-config
+              mountPath: /app/config
+              readOnly: true
+            - name: redis-certs
+              mountPath: /app/redis-certs/tls.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: connaisseur-alert-config
+              mountPath: /app/alerts/config.yaml
+              readOnly: true
+              subPath: config.yaml
+            
+          envFrom:
+          - configMapRef:
+              name: connaisseur-env
+          - secretRef:
+              name: connaisseur-redis-secret
+          env:
+          - name: REDIS_HOST
+            value: connaisseur-redis-service
+          
+      volumes:
+        - name: certs
+          secret:
+            secretName: connaisseur-tls  # pragma: allowlist secret
+        - name: redis-certs
+          secret:
+            secretName: connaisseur-redis-tls  # pragma: allowlist secret
+        - name: app-config
+          configMap:
+            name: connaisseur-app-config
+        - name: connaisseur-alert-config
+          configMap:
+            name: connaisseur-alert-config
+        
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - connaisseur
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      tolerations:
+        []
+      nodeSelector:
+        {}
+      securityContext:
+        {}
+---
+# Source: connaisseur/templates/redis.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connaisseur-redis
+  namespace: connaisseur
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/config: 99a80d9899d991871b8b733fdec49a8fafcbcc4be6bd3781402b1b4017eff282
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: connaisseur
+      app.kubernetes.io/instance: redis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: connaisseur
+        app.kubernetes.io/instance: redis
+      annotations:
+        checksum/config: 99a80d9899d991871b8b733fdec49a8fafcbcc4be6bd3781402b1b4017eff282
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: redis
+        image: redis:7
+        imagePullPolicy: Always
+        args:
+          - --requirepass
+          - $(REDIS_PASSWORD)
+          - --tls-cert-file
+          - /cfg/certs/tls.crt
+          - --tls-key-file
+          - /cfg/certs/tls.key
+          - --tls-auth-clients
+          - "no"
+          - --tls-port
+          - "6379"
+          - --port
+          - "6380"
+          - --loglevel
+          - "notice"
+          - --rename-command
+          - FLUSHALL
+          - ""
+          - --rename-command
+          - FLUSHDB
+          - ""
+        ports:
+          - containerPort: 6379
+            name: redis
+            protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+              - redis-cli
+              - -p
+              - "6380"
+              - ping
+        readinessProbe:
+          exec:
+            command:
+              - redis-cli
+              - -p
+              - "6380"
+              - ping
+        volumeMounts:
+          - name: certs
+            mountPath: /cfg/certs
+            readOnly: true
+        envFrom:
+          - secretRef:
+              name: connaisseur-redis-secret
+        resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+        securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 20001
+            runAsNonRoot: true
+            runAsUser: 10001
+            seccompProfile:
+              type: RuntimeDefault
+      securityContext:
+        {}
+      volumes:
+        - name: certs
+          secret:
+            secretName: connaisseur-redis-tls # pragma: allowlist secret
+---
+# Source: connaisseur/templates/webhook+certificate.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: connaisseur-webhook
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+webhooks:
+  - name: connaisseur-svc.connaisseur.svc
+    failurePolicy: Ignore
+    reinvocationPolicy: Never
+    clientConfig:
+      service:
+        name: connaisseur-svc
+        namespace: connaisseur
+        path: /mutate
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURyVENDQXBXZ0F3SUJBZ0lSQU95b05TNU5VcXVCbXNpdWtGZUozSkV3RFFZSktvWklodmNOQVFFTEJRQXcKS2pFb01DWUdBMVVFQXhNZlkyOXVibUZwYzNObGRYSXRjM1pqTG1OdmJtNWhhWE56WlhWeUxuTjJZekFnRncweQpOREExTXpFeE1qVTBNVGxhR0E4eU1USTBNRFV3TnpFeU5UUXhPVm93S2pFb01DWUdBMVVFQXhNZlkyOXVibUZwCmMzTmxkWEl0YzNaakxtTnZibTVoYVhOelpYVnlMbk4yWXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQUo0TkFhSEhTM3JYdlgvL3ZDWkRCRTdIZDFtN0RWUWd3V0dqZ2phcElpWlVzRnFQcllqTApWdVpIUDB6THBlcXpSMTFaenhPczNEc1ZEQlRXcVc3Rmdiak5yK3RKY0hneXR5NmJVZ2ozcFZ0QWY0bjd0endvCjljNXVOOHBMTTFoQ3d6Q0ZCQXhub2hxdWhXSmlPNGVGRFdISTFKdGZ6eDFlVzBYdWhNYUpsRERwV3kxbFBra1UKb1R4UlEyRHRDdktQTWF0cHVmNFFBSHNJUHRvVWtmYmYxVXRCb2RxVlVqZ25FcC9Pd2xWYmtkVnVwdzFRQ2RidwpjdWM2b1ZoelFRNXk1MG1xM0hCMzMrZ1d6YlF0Q2o5RFhRbi9ReUpKRVpWKzhYVnZrNW1sQTNLY25DSVpzekpSCkQ4UmM4dENMclhPOC9sS2lGTURpWTU3eHpqYU80dXNpNXQwQ0F3RUFBYU9CeXpDQnlEQU9CZ05WSFE4QkFmOEUKQkFNQ0JhQXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUZCd01DTUF3R0ExVWRFd0VCL3dRQwpNQUF3Z1lnR0ExVWRFUVNCZ0RCK2dnOWpiMjV1WVdsemMyVjFjaTF6ZG1PQ0cyTnZibTVoYVhOelpYVnlMWE4yCll5NWpiMjV1WVdsemMyVjFjb0lmWTI5dWJtRnBjM05sZFhJdGMzWmpMbU52Ym01aGFYTnpaWFZ5TG5OMlk0SXQKWTI5dWJtRnBjM05sZFhJdGMzWmpMbU52Ym01aGFYTnpaWFZ5TG5OMll5NWpiSFZ6ZEdWeUxteHZZMkZzTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTBiQTZieVhVVTUvSUgrSG03b1kzenQ1djg3V052M2NQd3QwVUZBR1ZkCi81Y2NFcWpRYVJFR0JNTXlrZGM1TTFvSzBUL2NkcEd3NFhnMjVXKzZVOXcwRWlGSGdlV0VJNnh5UDhPTXdKU2gKdE1jVFc5aVF1S2NzQlJiMTFZWHA2NjNXSE5QZWxoeXZzTnJWNEdhRUtGSkg3bXFnazJTUlV6YWlTcFc5bEt5NApzNnJDMkxUa2RpYThsM1Q1SG9zM1hwMTNjL243b2xaYS9lejFKVUFUdXZPNlN0cUlKajY4QWYxa3ozN0c1VENPCmEzWWpPVHZJOWkvcXdVcGJINGZvNkVNVjNmOXZQZ0RIeDJraERZeHBCY0lXQ3ROeE9KZlZoSDlIOC9RNVNQMncKbmRoaDkrbTRRNm1YbU80Qno5czhNZ2F3NFFpRU9Rc1NUbUgva3orZ3hvbjYKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    rules: []
+    sideEffects: None
+    admissionReviewVersions: ["v1"]
+---
+# Source: connaisseur/templates/webhook+certificate.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: connaisseur-webhook
+  labels:
+    helm.sh/chart: connaisseur-2.5.0
+    app.kubernetes.io/name: connaisseur
+    app.kubernetes.io/instance: connaisseur
+    app.kubernetes.io/version: "3.5.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade, post-rollback
+webhooks:
+  - name: connaisseur-svc.connaisseur.svc
+    failurePolicy: Fail
+    reinvocationPolicy: Never
+    clientConfig:
+      service:
+        name: connaisseur-svc
+        namespace: connaisseur
+        path: /mutate
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURyVENDQXBXZ0F3SUJBZ0lSQU95b05TNU5VcXVCbXNpdWtGZUozSkV3RFFZSktvWklodmNOQVFFTEJRQXcKS2pFb01DWUdBMVVFQXhNZlkyOXVibUZwYzNObGRYSXRjM1pqTG1OdmJtNWhhWE56WlhWeUxuTjJZekFnRncweQpOREExTXpFeE1qVTBNVGxhR0E4eU1USTBNRFV3TnpFeU5UUXhPVm93S2pFb01DWUdBMVVFQXhNZlkyOXVibUZwCmMzTmxkWEl0YzNaakxtTnZibTVoYVhOelpYVnlMbk4yWXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQUo0TkFhSEhTM3JYdlgvL3ZDWkRCRTdIZDFtN0RWUWd3V0dqZ2phcElpWlVzRnFQcllqTApWdVpIUDB6THBlcXpSMTFaenhPczNEc1ZEQlRXcVc3Rmdiak5yK3RKY0hneXR5NmJVZ2ozcFZ0QWY0bjd0endvCjljNXVOOHBMTTFoQ3d6Q0ZCQXhub2hxdWhXSmlPNGVGRFdISTFKdGZ6eDFlVzBYdWhNYUpsRERwV3kxbFBra1UKb1R4UlEyRHRDdktQTWF0cHVmNFFBSHNJUHRvVWtmYmYxVXRCb2RxVlVqZ25FcC9Pd2xWYmtkVnVwdzFRQ2RidwpjdWM2b1ZoelFRNXk1MG1xM0hCMzMrZ1d6YlF0Q2o5RFhRbi9ReUpKRVpWKzhYVnZrNW1sQTNLY25DSVpzekpSCkQ4UmM4dENMclhPOC9sS2lGTURpWTU3eHpqYU80dXNpNXQwQ0F3RUFBYU9CeXpDQnlEQU9CZ05WSFE4QkFmOEUKQkFNQ0JhQXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0VHQ0NzR0FRVUZCd01DTUF3R0ExVWRFd0VCL3dRQwpNQUF3Z1lnR0ExVWRFUVNCZ0RCK2dnOWpiMjV1WVdsemMyVjFjaTF6ZG1PQ0cyTnZibTVoYVhOelpYVnlMWE4yCll5NWpiMjV1WVdsemMyVjFjb0lmWTI5dWJtRnBjM05sZFhJdGMzWmpMbU52Ym01aGFYTnpaWFZ5TG5OMlk0SXQKWTI5dWJtRnBjM05sZFhJdGMzWmpMbU52Ym01aGFYTnpaWFZ5TG5OMll5NWpiSFZ6ZEdWeUxteHZZMkZzTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTBiQTZieVhVVTUvSUgrSG03b1kzenQ1djg3V052M2NQd3QwVUZBR1ZkCi81Y2NFcWpRYVJFR0JNTXlrZGM1TTFvSzBUL2NkcEd3NFhnMjVXKzZVOXcwRWlGSGdlV0VJNnh5UDhPTXdKU2gKdE1jVFc5aVF1S2NzQlJiMTFZWHA2NjNXSE5QZWxoeXZzTnJWNEdhRUtGSkg3bXFnazJTUlV6YWlTcFc5bEt5NApzNnJDMkxUa2RpYThsM1Q1SG9zM1hwMTNjL243b2xaYS9lejFKVUFUdXZPNlN0cUlKajY4QWYxa3ozN0c1VENPCmEzWWpPVHZJOWkvcXdVcGJINGZvNkVNVjNmOXZQZ0RIeDJraERZeHBCY0lXQ3ROeE9KZlZoSDlIOC9RNVNQMncKbmRoaDkrbTRRNm1YbU80Qno5czhNZ2F3NFFpRU9Rc1NUbUgva3orZ3hvbjYKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods", "pods/ephemeralcontainers", "replicationcontrollers"]
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["batch"]
+        apiVersions: ["v1"]
+        resources: ["jobs", "cronjobs"]
+    sideEffects: None
+    timeoutSeconds: 30
+    admissionReviewVersions: ["v1"]
+    namespaceSelector:
+      matchExpressions:
+      - key: securesystemsengineering.connaisseur/webhook
+        operator: NotIn
+        values:
+          - ignore
