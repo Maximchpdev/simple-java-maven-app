@@ -148,11 +148,20 @@ jobs:
            
     - name: Sign image with a key
       run: |
-        cosign sign --yes --key env://COSIGN_PRIVATE_KEY  docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        cosign sign --key env://COSIGN_PRIVATE_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+      shell: bash
       env:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.
         COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}   
+
+    - name: Check images
+      run: |
+        docker buildx imagetools inspect docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        docker pull docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        cosign verify --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+      env:
+        VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.  
         
 
 
