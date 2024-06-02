@@ -229,6 +229,9 @@ jobs:
           sparse-checkout: | # fetch only kubernetes folder
             kubernetes
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        
       - name: Verify images signed with cosign
         run: |
           cosign verify --insecure-ignore-tlog --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
