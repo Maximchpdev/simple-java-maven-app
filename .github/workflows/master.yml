@@ -90,8 +90,8 @@ jobs:
     - name: Run Snyk test for all project dependencies
       run: snyk test --all-projects --severity-threshold=critical
       
-  hadolint:
-    name: Run hadolint to check dockerfile
+  scan-dockerfile:
+    name: Run hadolint & trivy to check dockerfile
     runs-on: ubuntu-latest
       
     steps:
@@ -102,11 +102,22 @@ jobs:
       uses: hadolint/hadolint-action@v3.1.0
       with:
         dockerfile: Dockerfile
+
+    - name: Install Trivy
+      run: |
+        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install -y trivy
+
+    - name: Scan Dockerfile for vulnerabilities
+      run: trivy fs --exit-code 1 --severity HIGH,CRITICAL .      
   
   build:
     name: build and sign docker container
     runs-on: ubuntu-latest
-    needs: [version, snyk, hadolint]  # Wait for build to complete successfully
+    needs: [version, snyk, scan-dockerfile]  # Wait for build to complete successfully
 
     steps:
 
@@ -142,11 +153,10 @@ jobs:
           ${{ env.IMAGE }}:${{ env.VERSION }}
         build-args: |
           "VERSION=${{ env.VERSION }}"
-        #cache-from: type=gha
-        #cache-to: type=gha,mode=max
-        #add ARG VERSION to Dockerfile
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
            
-    - name: Sign image with a key
+    - name: Sign image using cosign
       run: |
         cosign sign --key env://COSIGN_PRIVATE_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
       shell: bash
@@ -154,19 +164,6 @@ jobs:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.
         COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}   
-
-    - name: Write cosign public key to disk
-      run: 'echo "$KEY" > cosign.pub'
-      shell: bash
-      env:
-          KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
-
-    - name: Verify images
-      run: |
-        cosign verify --insecure-ignore-tlog --key cosign.pub docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
-      env:
-        VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.  
-        
 
 
   terraform:
@@ -214,45 +211,8 @@ jobs:
       run: terraform plan -no-color    
       working-directory: ${{ env.TF_CONFIG_DIRECTORY }}
 
-    - uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
-      env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          <details><summary>Validation Output</summary>
-    
-          \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
-          \`\`\`
-    
-          </details>
-    
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-    
-          <details><summary>Show Plan</summary>
-    
-          \`\`\`\n
-          ${process.env.PLAN}
-          \`\`\`
-    
-          </details>
-    
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.TF_CONFIG_DIRECTORY }}\`, Workflow: \`${{ github.workflow }}\`*`;
-    
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          })
-
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/$$$$$master' && github.event_name == 'push'
       run: terraform apply -auto-approve
       working-directory: ${{ env.TF_CONFIG_DIRECTORY }}
       
@@ -268,6 +228,13 @@ jobs:
         with:
           sparse-checkout: | # fetch only kubernetes folder
             kubernetes
+
+      - name: Verify images signed with cosign
+        run: |
+          cosign verify --insecure-ignore-tlog --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        env:
+          COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+          VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.            
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v2.0
@@ -285,9 +252,6 @@ jobs:
       - name: Update kube config
         run: aws eks update-kubeconfig --name tf-cluster
 
-      - name: Show kube config path
-        run: kubectl config view --minify --output 'jsonpath={.kubeconfig}'
-
       - name: Create docker secret for docker registry
         run: |
           kubectl create secret docker-registry dockerhub-registry \
@@ -301,24 +265,13 @@ jobs:
           namespace: kube-system
           manifests: |
             kubernetes/metrics-server.yaml
-      - name: Create docker secret for docker registry
+  
+      - name: Verify images signed with cosign
         run: |
-          kubectl create namespace connaisseur \
-          kubectl apply -f kubernetes\connaisseur\deploy.yaml -l 'app.kubernetes.io/component=connaisseur-init' -n connaisseur \
-          kubectl apply -f kubernetes\connaisseur\deploy.yaml -l 'app.kubernetes.io/component=connaisseur-core' -n connaisseur \
-          kubectl apply -f kubernetes\connaisseur\deploy.yaml -l 'app.kubernetes.io/component=connaisseur-webhook' -n connaisseur \
-          sleep 30 \
-          kubectl get all -n connaisseur \
-          sleep 30 \ 
-          kubectl get all -n connaisseur \
-          sleep 30 \
-          kubectl get all -n connaisseur
-          sleep 30 \
-          kubectl get all -n connaisseur
-            
-      - name: Create docker secret for docker registry
-        run: |
-          kubectl run hello-world --image=docker.io/hello-world
+          cosign verify --insecure-ignore-tlog --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        env:
+          COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+          VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.            
 
       - name: Deploy app to the Kubernetes cluster
         uses: azure/k8s-deploy@v1
@@ -330,7 +283,3 @@ jobs:
             kubernetes/deployment.yaml
           images: |
             docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
-
-      - name: Create docker secret for docker registry
-        run: |
-          kubectl get pods --all-namespaces

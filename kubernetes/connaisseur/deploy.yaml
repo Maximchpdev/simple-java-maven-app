@@ -76,23 +76,22 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 data:
   config.yaml: |
-  
-validators:
-- name: myvalidator
-  type: cosign
-  trust_roots:
-  - name: mykey
-    key: |
------BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEx5afAnIsAhrAQ4WqPqiqx+CI3x1U
-6FrFPAUPleVYf4uWqOj2m5nXI1TwoBGUlBy+uokIVVNp4xc50cy4TS5cfQ==
------END PUBLIC KEY-----
+    validators:
+    - name: myvalidator
+      type: cosign
+      trust_roots:
+      - name: mykey
+        key: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEx5afAnIsAhrAQ4WqPqiqx+CI3x1U
+          6FrFPAUPleVYf4uWqOj2m5nXI1TwoBGUlBy+uokIVVNp4xc50cy4TS5cfQ==
+          -----END PUBLIC KEY-----
+    policy:
+    - pattern: "docker.io/maximchp/weatherapp:*"
+      validator: myvalidator
+      with:
+        key: mykey
 
-policy:
-- pattern: "docker.io/maximchp/weatherapp:*"
-  validator: myvalidator
-  with:
-    key: mykey
 ---
 # Source: connaisseur/templates/configmaps.yaml
 apiVersion: v1
