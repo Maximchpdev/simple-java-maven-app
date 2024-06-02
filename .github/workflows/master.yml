@@ -158,7 +158,7 @@ jobs:
            
     - name: Sign image using cosign
       run: |
-        cosign sign --key env://COSIGN_PRIVATE_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+        cosign sign --yes --key env://COSIGN_PRIVATE_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
       shell: bash
       env:
         VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.
