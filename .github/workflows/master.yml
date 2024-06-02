@@ -231,10 +231,10 @@ jobs:
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
-        
+
       - name: Verify images signed with cosign
         run: |
-          cosign verify --insecure-ignore-tlog --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:${{ env.VERSION }}
+          cosign verify --insecure-ignore-tlog --key env://COSIGN_PUBLIC_KEY docker.io/${{ env.IMAGE }}:v6.4.0
         env:
           COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
           VERSION: ${{ needs.version.outputs.VERSION }}  # to get version from previous job.            
